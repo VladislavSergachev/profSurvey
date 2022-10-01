@@ -77,19 +77,23 @@
         motivComplex.calculateOutterPositive(surveyResults[questionId.MoneyAwardMark], surveyResults[questionId.SelfDevelopMark], surveyResults[questionId.SocialPrestigeMark]);
         motivComplex.calculateOutterNegative(surveyResults[questionId.CriticAvoidMark], surveyResults[questionId.TroubleAvoidMark]);
 
+        let inmotVal = Math.trunc(motivComplex.inMotivation)
+        let outposmotVal = Math.trunc(motivComplex.outterPositive);
+        let outnegmotVal = Math.trunc(motivComplex.outterNegative);
+
         for (let key in surveyResults)
             console.log(key + ": " + surveyResults[key]);
 
         let isOptimnal = motivComplex.checkIfComplexOptimal();
 
         var inmot = document.getElementById('body').appendChild(document.createElement('p'));
-        inmot.innerHTML = `ВМ: ${motivComplex.inMotivation}`
+        inmot.innerHTML = `ВМ: ${inmotVal}`
 
         var outpos = document.getElementById('body').appendChild(document.createElement('p'));
-        outpos.innerHTML = `ВПМ: ${motivComplex.outterPositive}`
+        outpos.innerHTML = `ВПМ: ${outposmotVal}`
 
         var outneg = document.getElementById('body').appendChild(document.createElement('p'));
-        outneg.innerHTML = `ВОМ: ${motivComplex.outterNegative}`
+        outneg.innerHTML = `ВОМ: ${outnegmotVal}`
 
 
         var opt = document.getElementById('body').appendChild(document.createElement('p'));
@@ -105,17 +109,22 @@
         constructor(props) {
             super(props);
 
-            this.state = { Value: 0 };
+            this.state = {  };
             this.text = props.text;
             this.mark = null;
 
         }
 
+        setMark(val)
+        {
+            this.setState((state) => { return {Value: val} });
+        }
+        
         onMarkChanged(val) {
-            this.setState({ Value: val });
+            this.mark = val;
             console.log("state is:" + this.state.Value);
 
-            this.props.handleMarkChange(this.state.Value);
+            this.props.handleMarkChange(this.mark);
         }
 
 
