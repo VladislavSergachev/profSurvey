@@ -17,8 +17,12 @@
 
 
 <style>
+    *{
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    
     body {
-        background-color: white;
+        background-color:aliceblue;
     }
 
     /*label,
@@ -26,19 +30,23 @@
         color: aliceblue;
     }*/
 
-    .questionComponent {
-    }
-
     .surveyForm {
         margin-left: 100px;
         margin-right: 100px;
+        background-color: white;
+    }
 
+    .surveyForm button{
+        margin-left: 50%;
+        margin-top: 10%;
+        margin-bottom: 3%;
     }
 </style>
 
 
 <head>
-    <b>Инструкция:</b> прочитайте ниже перечисленные мотивы профессиональной деятельности и дайте оценку <br/> их значимости для Вас по пятибалльной шкале.
+    <b>Инструкция:</b> прочитайте ниже перечисленные мотивы профессиональной деятельности и дайте оценку <br /> их
+    значимости для Вас по пятибалльной шкале.
 </head>
 
 <body>
@@ -46,6 +54,7 @@
 
     </div>
 </body>
+
 
 
 <script type="text/babel">
@@ -66,14 +75,24 @@
         constructor(props) {
             super(props);
             this.surveyResults = {}
+
+            this.countOfQuestions = 7
         }
 
+        validateInput()
+        {
+            if(Object.keys(this.surveyResults).length === this.countOfQuestions)
+                return true;
+            
+            return false;
+        }
+        
         render() {
             return <form className={styleClasses.surveyForm}>
 
                 <ol>
                     <li><TextQuestion text="Фамилия Имя Отчество" id={questionId.PersonName} /></li>
-                    <li><TextQuestion text="Стаж" id={questionId.Experience}/></li>
+                    <li><TextQuestion text="Стаж" id={questionId.Experience} /></li>
                     <li><NumericQuestion handleMarkChange={(val) => { this.surveyResults[questionId.MoneyAwardMark] = val }} text="Денежный заработок" id={questionId.MoneyAwardMark} /></li>
                     <li><NumericQuestion handleMarkChange={(val) => { this.surveyResults[questionId.SelfDevelopMark] = val }} text="Стремление к продвижению по работе" id={questionId.SelfDevelopMark} /></li>
                     <li><NumericQuestion handleMarkChange={(val) => { this.surveyResults[questionId.CriticAvoidMark] = val }} text="Стремление избежать критики со стороны руководства или коллег" id={questionId.CriticAvoidMark} /></li>
@@ -86,7 +105,11 @@
                 <button onClick={(e) => {
 
                     e.preventDefault();
-                    this.props.handleSubmit(this.surveyResults, questionId)
+
+                    if(this.validateInput())
+                        this.props.handleSubmit(this.surveyResults, questionId)
+                    else
+                        alert("Пожалуйста, заполните ВСЕ обязательные поля.")
 
                 }}> Завершить </button>
             </form>
@@ -201,7 +224,7 @@
 
         render() {
             return <div className={styleClasses.Question}>
-                <h3>{this.text}</h3>
+                <h3>{this.text}<label style={{ color: 'red' }}>*</label></h3>
                 <label>в очень незначительной мере</label>
 
                 <input text="1" onClick={() => { this.onMarkChanged(1); console.log(1) }} type="radio" name={this.props.id} />
@@ -216,8 +239,10 @@
         }
     }
 
-    root.render(
+    root.render(<div>
+
         <SurveyForm handleSubmit={onSurveyFinished} />
+        <label style={{ color: 'red' }}>* - обязательные для ввода поля</label></div>
     );
 
 
