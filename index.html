@@ -16,12 +16,83 @@
 <div id="survey"></div>
 
 
+<style>
+    body {
+        background-color: white;
+    }
+
+    /*label,
+    h3 {
+        color: aliceblue;
+    }*/
+
+    .questionComponent {
+    }
+
+    .surveyForm {
+        margin-left: 100px;
+        margin-right: 100px;
+
+    }
+</style>
+
+
+<head>
+    <b>Инструкция:</b> прочитайте ниже перечисленные мотивы профессиональной деятельности и дайте оценку <br/> их значимости для Вас по пятибалльной шкале.
+</head>
 
 <body>
-    <div id="body"></div>
+    <div id="body">
+
+    </div>
 </body>
 
+
 <script type="text/babel">
+    const questionId =
+    {
+        Experience: "experience",
+        PersonName: "personInfo",
+        MoneyAwardMark: "moneyAwardMark",
+        SelfDevelopMark: "selfDevelopMark",
+        CriticAvoidMark: "criticAvoidMark",
+        TroubleAvoidMark: "troubleAvoidMark",
+        SocialPrestigeMark: "socPrestMark",
+        WorkSatifactionMark: "selfSatisfMark",
+        SelfRealizationMark: "selfRealizeMark"
+    };
+
+    class SurveyForm extends React.Component {
+        constructor(props) {
+            super(props);
+            this.surveyResults = {}
+        }
+
+        render() {
+            return <form className={styleClasses.surveyForm}>
+
+                <ol>
+                    <li><TextQuestion text="Фамилия Имя Отчество" id={questionId.PersonName} /></li>
+                    <li><TextQuestion text="Стаж" id={questionId.Experience}/></li>
+                    <li><NumericQuestion handleMarkChange={(val) => { this.surveyResults[questionId.MoneyAwardMark] = val }} text="Денежный заработок" id={questionId.MoneyAwardMark} /></li>
+                    <li><NumericQuestion handleMarkChange={(val) => { this.surveyResults[questionId.SelfDevelopMark] = val }} text="Стремление к продвижению по работе" id={questionId.SelfDevelopMark} /></li>
+                    <li><NumericQuestion handleMarkChange={(val) => { this.surveyResults[questionId.CriticAvoidMark] = val }} text="Стремление избежать критики со стороны руководства или коллег" id={questionId.CriticAvoidMark} /></li>
+                    <li><NumericQuestion handleMarkChange={(val) => { this.surveyResults[questionId.TroubleAvoidMark] = val }} text="Стремление избежать возможных наказаний/неприятностей" id={questionId.TroubleAvoidMark} /></li>
+                    <li><NumericQuestion handleMarkChange={(val) => { this.surveyResults[questionId.SocialPrestigeMark] = val }} text="Потребность в достижении социального престижа и уважения со стороны других" id={questionId.SocialPrestigeMark} /></li>
+                    <li><NumericQuestion handleMarkChange={(val) => { this.surveyResults[questionId.WorkSatifactionMark] = val }} text="Удовлетворение от самого процесса и результата работы" id={questionId.WorkSatifactionMark} /></li>
+                    <li><NumericQuestion handleMarkChange={(val) => { this.surveyResults[questionId.SelfRealizationMark] = val }} text="Возможность наиболее полной реализации именно в данной деятельности" id={questionId.SelfRealizationMark} /></li>
+                </ol>
+
+                <button onClick={(e) => {
+
+                    e.preventDefault();
+                    this.props.handleSubmit(this.surveyResults, questionId)
+
+                }}> Завершить </button>
+            </form>
+        }
+    }
+
     class TextQuestion extends React.Component {
         constructor(props) {
             super(props);
@@ -30,7 +101,7 @@
 
         render() {
             return <div>
-                <h1>{this.text}</h1>
+                <h3>{this.text}</h3>
                 <input type="text" />
             </div>
         }
@@ -72,17 +143,14 @@
 
     var motivComplex = new MotivationalComplexData();
 
-    function onSurveyFinished() {
-        motivComplex.calculateInMotivation(surveyResults[questionId.WorkSatifactionMark], surveyResults[questionId.SelfRealizationMark]);
-        motivComplex.calculateOutterPositive(surveyResults[questionId.MoneyAwardMark], surveyResults[questionId.SelfDevelopMark], surveyResults[questionId.SocialPrestigeMark]);
-        motivComplex.calculateOutterNegative(surveyResults[questionId.CriticAvoidMark], surveyResults[questionId.TroubleAvoidMark]);
+    function onSurveyFinished(vals, qId) {
+        motivComplex.calculateInMotivation(vals[qId.WorkSatifactionMark], vals[qId.SelfRealizationMark]);
+        motivComplex.calculateOutterPositive(vals[qId.MoneyAwardMark], vals[qId.SelfDevelopMark], vals[qId.SocialPrestigeMark]);
+        motivComplex.calculateOutterNegative(vals[qId.CriticAvoidMark], vals[qId.TroubleAvoidMark]);
 
-        let inmotVal = Math.trunc(motivComplex.inMotivation)
-        let outposmotVal = Math.trunc(motivComplex.outterPositive);
-        let outnegmotVal = Math.trunc(motivComplex.outterNegative);
-
-        for (let key in surveyResults)
-            console.log(key + ": " + surveyResults[key]);
+        let inmotVal = motivComplex.inMotivation.toFixed(2)
+        let outposmotVal = motivComplex.outterPositive.toFixed(2)
+        let outnegmotVal = motivComplex.outterNegative.toFixed(2)
 
         let isOptimnal = motivComplex.checkIfComplexOptimal();
 
@@ -98,28 +166,30 @@
 
         var opt = document.getElementById('body').appendChild(document.createElement('p'));
         opt.innerHTML = `Комплекс: ${motivComplex.isOptimnal ? "Оптимальный" : "Неоптимальный"}`
-
-
-
     }
 
-    var surveyResults = {};
+
+
+    const styleClasses =
+    {
+        Question: "questionComponent",
+        surveyForm: "surveyForm"
+    }
 
     class NumericQuestion extends React.Component {
         constructor(props) {
             super(props);
 
-            this.state = {  };
+            this.state = {};
             this.text = props.text;
             this.mark = null;
 
         }
 
-        setMark(val)
-        {
-            this.setState((state) => { return {Value: val} });
+        setMark(val) {
+            this.setState((state) => { return { Value: val } });
         }
-        
+
         onMarkChanged(val) {
             this.mark = val;
             console.log("state is:" + this.state.Value);
@@ -130,56 +200,24 @@
 
 
         render() {
-            return <div>
-                <h1>{this.text}</h1>
-                <label>Мало</label>
+            return <div className={styleClasses.Question}>
+                <h3>{this.text}</h3>
+                <label>в очень незначительной мере</label>
 
-                <input value="1" onClick={() => {this.onMarkChanged(1); console.log(1)}} type="radio" name={this.props.id} />
-                <input value="2" onClick={() => {this.onMarkChanged(2); console.log(2)}} type="radio" name={this.props.id} />
+                <input text="1" onClick={() => { this.onMarkChanged(1); console.log(1) }} type="radio" name={this.props.id} />
+                <input text="2" onClick={() => { this.onMarkChanged(2); console.log(2) }} type="radio" name={this.props.id} />
 
-                <input value="3" onClick={() => {this.onMarkChanged(3); console.log(3)}} type="radio" name={this.props.id} />
-                <input value="4" onClick={() => {this.onMarkChanged(4); console.log(4)}} type="radio" name={this.props.id} />
-                <input value="5" onClick={() => {this.onMarkChanged(5); console.log(5)}} type="radio" name={this.props.id} />
-                <label>Много</label>
+                <input text="3" onClick={() => { this.onMarkChanged(3); console.log(3) }} type="radio" name={this.props.id} />
+                <input text="4" onClick={() => { this.onMarkChanged(4); console.log(4) }} type="radio" name={this.props.id} />
+                <input text="5" onClick={() => { this.onMarkChanged(5); console.log(5) }} type="radio" name={this.props.id} />
+                <label>в очень большой мере</label>
 
             </div>
         }
     }
 
-
-
-
-    const questionId =
-    {
-        PersonName: "personInfo",
-        MoneyAwardMark: "moneyAwardMark",
-        SelfDevelopMark: "selfDevelopMark",
-        CriticAvoidMark: "criticAvoidMark",
-        TroubleAvoidMark: "troubleAvoidMark",
-        SocialPrestigeMark: "socPrestMark",
-        WorkSatifactionMark: "selfSatisfMark",
-        SelfRealizationMark: "selfRealizeMark"
-    };
-
-
-    function handle(e) {
-        console.log("Value is")
-        console.log(e);
-    }
-
     root.render(
-        <div>
-            <TextQuestion text="ФИО" id={questionId.PersonName} />
-            <NumericQuestion handleMarkChange={(val) => { surveyResults[questionId.SelfDevelopMark] = val }} text="Стремление к продвижению по работе" id={questionId.SelfDevelopMark} />
-            <NumericQuestion handleMarkChange={(val) => { surveyResults[questionId.TroubleAvoidMark] = val }} text="Наказания" id={questionId.TroubleAvoidMark} />
-            <NumericQuestion handleMarkChange={(val) => { surveyResults[questionId.CriticAvoidMark] = val }} text="Стремление избежать критики со стороны руководства или коллег" id={questionId.CriticAvoidMark} />
-            <NumericQuestion handleMarkChange={(val) => { surveyResults[questionId.SocialPrestigeMark] = val }} text="Соц. престиж" id={questionId.SocialPrestigeMark} />
-            <NumericQuestion handleMarkChange={(val) => { surveyResults[questionId.WorkSatifactionMark] = val }} text="Удовлетворение от работы" id={questionId.WorkSatifactionMark} />
-            <NumericQuestion handleMarkChange={(val) => { surveyResults[questionId.SelfRealizationMark] = val }} text="Самореализация" id={questionId.SelfRealizationMark} />
-            <NumericQuestion handleMarkChange={(val) => { surveyResults[questionId.MoneyAwardMark] = val }} text="Денежный заработок" id={questionId.MoneyAwardMark} />;
-
-            <button onClick={() => onSurveyFinished(root)}>Завершить</button>;
-        </div>
+        <SurveyForm handleSubmit={onSurveyFinished} />
     );
 
 
