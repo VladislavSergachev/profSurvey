@@ -102,6 +102,9 @@
                     <li><NumericQuestion handleMarkChange={(val) => { this.surveyResults[questionId.SelfRealizationMark] = val }} text="Возможность наиболее полной реализации именно в данной деятельности" id={questionId.SelfRealizationMark} /></li>
                 </ol>
 
+                <label style={{ color: 'red' }}>* - обязательные для ввода поля</label>
+
+                <div>
                 <button onClick={(e) => {
 
                     e.preventDefault();
@@ -112,6 +115,7 @@
                         alert("Пожалуйста, заполните ВСЕ обязательные поля.")
 
                 }}> Завершить </button>
+                </div>
             </form>
         }
     }
@@ -130,6 +134,24 @@
         }
     }
 
+    class ResultsForm extends React.Component
+    {
+        constructor(props)
+        {
+            super(props)
+        }
+        
+        render()
+        {
+            return <form className={styleClasses.surveyForm}>
+                <h1>Ваши результаты</h1>
+                <div>Внутренняя мотивация (ВМ): {this.props.inMot}</div>
+                <div>Внешняя положительная мотивация (ВПМ): {this.props.outPos}</div>
+                <div>Внешняя отрицательная мотивация (ВОМ): {this.props.outNeg}</div>
+                </form>
+        }
+    }
+    
     class MotivationalComplexData {
         constructor() {
             this.inMotivation = null;
@@ -177,18 +199,7 @@
 
         let isOptimnal = motivComplex.checkIfComplexOptimal();
 
-        var inmot = document.getElementById('body').appendChild(document.createElement('p'));
-        inmot.innerHTML = `ВМ: ${inmotVal}`
-
-        var outpos = document.getElementById('body').appendChild(document.createElement('p'));
-        outpos.innerHTML = `ВПМ: ${outposmotVal}`
-
-        var outneg = document.getElementById('body').appendChild(document.createElement('p'));
-        outneg.innerHTML = `ВОМ: ${outnegmotVal}`
-
-
-        var opt = document.getElementById('body').appendChild(document.createElement('p'));
-        opt.innerHTML = `Комплекс: ${motivComplex.isOptimnal ? "Оптимальный" : "Неоптимальный"}`
+        root.render(<ResultsForm inMot={inmotVal} outPos={outposmotVal} outNeg={outnegmotVal}/>)
     }
 
 
@@ -239,10 +250,8 @@
         }
     }
 
-    root.render(<div>
-
+    root.render(
         <SurveyForm handleSubmit={onSurveyFinished} />
-        <label style={{ color: 'red' }}>* - обязательные для ввода поля</label></div>
     );
 
 
