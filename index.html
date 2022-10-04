@@ -3,9 +3,7 @@
 
 <meta charset="utf-8" />
 
-<title>Проф Опрос</title>
-
-<title>Опрос</title>
+<title>Профессиональный опрос</title>
 
 
 
@@ -148,6 +146,7 @@
                 <div>Внутренняя мотивация (ВМ): {this.props.inMot}</div>
                 <div>Внешняя положительная мотивация (ВПМ): {this.props.outPos}</div>
                 <div>Внешняя отрицательная мотивация (ВОМ): {this.props.outNeg}</div>
+                <div>Тип мотивационного комплекса: { (this.props.complexType) ? 'Оптимальный' : 'Неоптимальный'}</div>
                 </form>
         }
     }
@@ -199,7 +198,7 @@
 
         let isOptimnal = motivComplex.checkIfComplexOptimal();
 
-        root.render(<ResultsForm inMot={inmotVal} outPos={outposmotVal} outNeg={outnegmotVal}/>)
+        root.render(<ResultsForm inMot={inmotVal} outPos={outposmotVal} outNeg={outnegmotVal} complexType={isOptimnal}/>)
     }
 
 
