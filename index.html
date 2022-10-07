@@ -3,13 +3,255 @@
 
 <meta charset="utf-8" />
 
-<title>Проф Опрос</title>
+<title>Профессиональный опрос</title>
 
-<title>Опрос</title> 
+
+
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<div id="survey"></div>
+
+
+<style>
+    *{
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    
+    body {
+        background-color:aliceblue;
+    }
+
+    /*label,
+    h3 {
+        color: aliceblue;
+    }*/
+
+    .surveyForm {
+        margin-left: 100px;
+        margin-right: 100px;
+        background-color: white;
+    }
+
+    .surveyForm button{
+        margin-left: 50%;
+        margin-top: 10%;
+        margin-bottom: 3%;
+    }
+</style>
+
+
+<head>
+    <b>Инструкция:</b> прочитайте ниже перечисленные мотивы профессиональной деятельности и дайте оценку <br /> их
+    значимости для Вас по пятибалльной шкале.
+</head>
 
 <body>
-    <div id="body"></div>
+    <div id="body">
+
+    </div>
 </body>
 
-<script type="text/babel" src="public/bundle.js">
+
+
+<script type="text/babel">
+    const questionId =
+    {
+        Experience: "experience",
+        PersonName: "personInfo",
+        MoneyAwardMark: "moneyAwardMark",
+        SelfDevelopMark: "selfDevelopMark",
+        CriticAvoidMark: "criticAvoidMark",
+        TroubleAvoidMark: "troubleAvoidMark",
+        SocialPrestigeMark: "socPrestMark",
+        WorkSatifactionMark: "selfSatisfMark",
+        SelfRealizationMark: "selfRealizeMark"
+    };
+
+    class SurveyForm extends React.Component {
+        constructor(props) {
+            super(props);
+            this.surveyResults = {}
+
+            this.countOfQuestions = 7
+        }
+
+        validateInput()
+        {
+            if(Object.keys(this.surveyResults).length === this.countOfQuestions)
+                return true;
+            
+            return false;
+        }
+        
+        render() {
+            return <form className={styleClasses.surveyForm}>
+
+                <ol>
+                    <li><TextQuestion text="Фамилия Имя Отчество" id={questionId.PersonName} /></li>
+                    <li><TextQuestion text="Стаж" id={questionId.Experience} /></li>
+                    <li><NumericQuestion handleMarkChange={(val) => { this.surveyResults[questionId.MoneyAwardMark] = val }} text="Денежный заработок" id={questionId.MoneyAwardMark} /></li>
+                    <li><NumericQuestion handleMarkChange={(val) => { this.surveyResults[questionId.SelfDevelopMark] = val }} text="Стремление к продвижению по работе" id={questionId.SelfDevelopMark} /></li>
+                    <li><NumericQuestion handleMarkChange={(val) => { this.surveyResults[questionId.CriticAvoidMark] = val }} text="Стремление избежать критики со стороны руководства или коллег" id={questionId.CriticAvoidMark} /></li>
+                    <li><NumericQuestion handleMarkChange={(val) => { this.surveyResults[questionId.TroubleAvoidMark] = val }} text="Стремление избежать возможных наказаний/неприятностей" id={questionId.TroubleAvoidMark} /></li>
+                    <li><NumericQuestion handleMarkChange={(val) => { this.surveyResults[questionId.SocialPrestigeMark] = val }} text="Потребность в достижении социального престижа и уважения со стороны других" id={questionId.SocialPrestigeMark} /></li>
+                    <li><NumericQuestion handleMarkChange={(val) => { this.surveyResults[questionId.WorkSatifactionMark] = val }} text="Удовлетворение от самого процесса и результата работы" id={questionId.WorkSatifactionMark} /></li>
+                    <li><NumericQuestion handleMarkChange={(val) => { this.surveyResults[questionId.SelfRealizationMark] = val }} text="Возможность наиболее полной реализации именно в данной деятельности" id={questionId.SelfRealizationMark} /></li>
+                </ol>
+
+                <label style={{ color: 'red' }}>* - обязательные для ввода поля</label>
+
+                <div>
+                <button onClick={(e) => {
+
+                    e.preventDefault();
+
+                    if(this.validateInput())
+                        this.props.handleSubmit(this.surveyResults, questionId)
+                    else
+                        alert("Пожалуйста, заполните ВСЕ обязательные поля.")
+
+                }}> Завершить </button>
+                </div>
+            </form>
+        }
+    }
+
+    class TextQuestion extends React.Component {
+        constructor(props) {
+            super(props);
+            this.text = props.text;
+        }
+
+        render() {
+            return <div>
+                <h3>{this.text}</h3>
+                <input type="text" />
+            </div>
+        }
+    }
+
+    class ResultsForm extends React.Component
+    {
+        constructor(props)
+        {
+            super(props)
+        }
+        
+        render()
+        {
+            return <form className={styleClasses.surveyForm}>
+                <h1>Ваши результаты</h1>
+                <div>Внутренняя мотивация (ВМ): {this.props.inMot}</div>
+                <div>Внешняя положительная мотивация (ВПМ): {this.props.outPos}</div>
+                <div>Внешняя отрицательная мотивация (ВОМ): {this.props.outNeg}</div>
+                <div>Тип мотивационного комплекса: { (this.props.complexType) ? 'Оптимальный' : 'Неоптимальный'}</div>
+                </form>
+        }
+    }
+    
+    class MotivationalComplexData {
+        constructor() {
+            this.inMotivation = null;
+            this.outterPositive = null;
+            this.outterNegative = null;
+            this.isComplexOptimal = null;
+        }
+
+        calculateInMotivation(workingProcSatisfaction, selfRealizationAbility) {
+
+            let val = (workingProcSatisfaction + selfRealizationAbility) / 2;
+            return (this.inMotivation = val);
+        }
+
+        calculateOutterPositive(moneyAward, selfDevelopDesire, socialPrestigeDemand) {
+            let val = (moneyAward + selfDevelopDesire + socialPrestigeDemand) / 3
+            return (this.outterPositive = val);
+        }
+
+        calculateOutterNegative(criticAvoidingAspiration, troubleAvoidingAspiration) {
+            return (this.outterNegative = (criticAvoidingAspiration + troubleAvoidingAspiration) / 2);
+        }
+
+        checkIfComplexOptimal() {
+            let optimalRelationA = (this.inMotivation > this.outterPositive) && (this.inMotivation > this.outterNegative);
+            let optimalRelationB = (this.inMotivation == this.outterPositive) && (this.outterPositive > this.outterNegative);
+
+            return (this.isComplexOptimal = (optimalRelationA || optimalRelationB));
+        }
+    }
+
+    const canvas = document.getElementById("body");
+    const root = ReactDOM.createRoot(canvas);
+
+    var motivComplex = new MotivationalComplexData();
+
+    function onSurveyFinished(vals, qId) {
+        motivComplex.calculateInMotivation(vals[qId.WorkSatifactionMark], vals[qId.SelfRealizationMark]);
+        motivComplex.calculateOutterPositive(vals[qId.MoneyAwardMark], vals[qId.SelfDevelopMark], vals[qId.SocialPrestigeMark]);
+        motivComplex.calculateOutterNegative(vals[qId.CriticAvoidMark], vals[qId.TroubleAvoidMark]);
+
+        let inmotVal = motivComplex.inMotivation.toFixed(2)
+        let outposmotVal = motivComplex.outterPositive.toFixed(2)
+        let outnegmotVal = motivComplex.outterNegative.toFixed(2)
+
+        let isOptimnal = motivComplex.checkIfComplexOptimal();
+
+        root.render(<ResultsForm inMot={inmotVal} outPos={outposmotVal} outNeg={outnegmotVal} complexType={isOptimnal}/>)
+    }
+
+
+
+    const styleClasses =
+    {
+        Question: "questionComponent",
+        surveyForm: "surveyForm"
+    }
+
+    class NumericQuestion extends React.Component {
+        constructor(props) {
+            super(props);
+
+            this.state = {};
+            this.text = props.text;
+            this.mark = null;
+
+        }
+
+        setMark(val) {
+            this.setState((state) => { return { Value: val } });
+        }
+
+        onMarkChanged(val) {
+            this.mark = val;
+            console.log("state is:" + this.state.Value);
+
+            this.props.handleMarkChange(this.mark);
+        }
+
+
+
+        render() {
+            return <div className={styleClasses.Question}>
+                <h3>{this.text}<label style={{ color: 'red' }}>*</label></h3>
+                <label>в очень незначительной мере</label>
+
+                <input text="1" onClick={() => { this.onMarkChanged(1); console.log(1) }} type="radio" name={this.props.id} />
+                <input text="2" onClick={() => { this.onMarkChanged(2); console.log(2) }} type="radio" name={this.props.id} />
+
+                <input text="3" onClick={() => { this.onMarkChanged(3); console.log(3) }} type="radio" name={this.props.id} />
+                <input text="4" onClick={() => { this.onMarkChanged(4); console.log(4) }} type="radio" name={this.props.id} />
+                <input text="5" onClick={() => { this.onMarkChanged(5); console.log(5) }} type="radio" name={this.props.id} />
+                <label>в очень большой мере</label>
+
+            </div>
+        }
+    }
+
+    root.render(
+        <SurveyForm handleSubmit={onSurveyFinished} />
+    );
+
+
 </script>
