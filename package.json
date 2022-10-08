@@ -1,8 +1,8 @@
 {
-  "name": "searchapp",
+  "name": "profsurvey",
   "description": "A React.js project using Webpack",
-  "version": "1.0.0",
-  "author": "metanit.com",
+  "version": "0.1.0",
+  "author": "VladiSLAV",
   "scripts": {
     "dev": "webpack serve",
     "build": "webpack"
@@ -12,8 +12,8 @@
     "react-dom": "18.2.0",
     "history":"5.3.0",
     
-    "react-router": "6.4.1",
-    "react-router-dom": "6.4.1"
+    "react-router": "6.4.2",
+    "react-router-dom": "6.4.2"
   },
   "devDependencies": {
     "@babel/cli": "7.19.3",
@@ -22,6 +22,7 @@
     "babel-loader": "8.2.5",
     "webpack": "5.74.0",
     "webpack-cli": "4.10.0",
-    "webpack-dev-server": "4.11.1"
+    "webpack-dev-server": "4.11.1",
+    "path": "0.12.7"
   }
 }

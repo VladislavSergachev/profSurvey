@@ -1,0 +1,19 @@
+*{
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background-color:aliceblue;
+}
+
+.surveyForm {
+    margin-left: 100px;
+    margin-right: 100px;
+    background-color: white;
+}
+
+.surveyForm button{
+    margin-left: 50%;
+    margin-top: 10%;
+    margin-bottom: 3%;
+}

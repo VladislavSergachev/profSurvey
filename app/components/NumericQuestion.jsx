@@ -1,4 +1,5 @@
-const React = require("react");
+const React = require("../../node_modules/react/umd/react.development")
+const Constants = require("../logic/constants.js")
 
 class NumericQuestion extends React.Component {
     constructor(props) {
@@ -10,6 +11,10 @@ class NumericQuestion extends React.Component {
 
     }
 
+    setMark(val) {
+        this.setState((state) => { return { Value: val } });
+    }
+
     onMarkChanged(val) {
         this.mark = val;
         console.log("state is:" + this.state.Value);
@@ -17,23 +22,23 @@ class NumericQuestion extends React.Component {
         this.props.handleMarkChange(this.mark);
     }
 
+
+
     render() {
-        return <div>
-            <h1>{this.text}</h1>
-            <label>Мало</label>
+        return <div className={Constants.styleClasses.Question}>
+            <h3>{this.text}<label style={{ color: 'red' }}>*</label></h3>
+            <label>в очень незначительной мере</label>
 
-            <input value="1" onClick={() => { this.onMarkChanged(1); console.log(1) }} type="radio" name={this.props.id} />
-            <input value="2" onClick={() => { this.onMarkChanged(2); console.log(2) }} type="radio" name={this.props.id} />
+            <input text="1" onClick={() => { this.onMarkChanged(1); }} type="radio" name={this.props.id} />
+            <input text="2" onClick={() => { this.onMarkChanged(2); }} type="radio" name={this.props.id} />
 
-            <input value="3" onClick={() => { this.onMarkChanged(3); console.log(3) }} type="radio" name={this.props.id} />
-            <input value="4" onClick={() => { this.onMarkChanged(4); console.log(4) }} type="radio" name={this.props.id} />
-            <input value="5" onClick={() => { this.onMarkChanged(5); console.log(5) }} type="radio" name={this.props.id} />
-            <label>Много</label>
+            <input text="3" onClick={() => { this.onMarkChanged(3); }} type="radio" name={this.props.id} />
+            <input text="4" onClick={() => { this.onMarkChanged(4); }} type="radio" name={this.props.id} />
+            <input text="5" onClick={() => { this.onMarkChanged(5); }} type="radio" name={this.props.id} />
+            <label>в очень большой мере</label>
 
         </div>
     }
-
-    
 }
 
 module.exports = NumericQuestion

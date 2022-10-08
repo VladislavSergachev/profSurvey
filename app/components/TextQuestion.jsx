@@ -1,4 +1,4 @@
-const React = require("react");
+const React = require("../../node_modules/react/umd/react.development")
 
 class TextQuestion extends React.Component {
     constructor(props) {
@@ -8,7 +8,7 @@ class TextQuestion extends React.Component {
 
     render() {
         return <div>
-            <h1>{this.text}</h1>
+            <h3>{this.text}</h3>
             <input type="text" />
         </div>
     }
